@@ -84,6 +84,15 @@ class MidiViewerDialog(QDialog):
         self._groupbox.setFocusPolicy(Qt.NoFocus)
         self._groupbox.setLayout(QFormLayout())
 
+        self._checkbox_autoscroll = QCheckBox(parent=self._groupbox)
+        self._checkbox_autoscroll.setFocusPolicy(Qt.NoFocus)
+        self._checkbox_autoscroll.setText(
+            translate('midi_viewer', 'Auto scroll to show most received message'))
+        self._checkbox_autoscroll.setChecked(
+            get_plugin('MidiViewer').Config.get('autoscroll'))
+        self._checkbox_autoscroll.released.connect(self._set_autoscroll)
+        self._groupbox.layout().addWidget(self._checkbox_autoscroll)
+
         self._checkbox_clearonclose = QCheckBox(parent=self._groupbox)
         self._checkbox_clearonclose.setFocusPolicy(Qt.NoFocus)
         self._checkbox_clearonclose.setText(
@@ -111,6 +120,11 @@ class MidiViewerDialog(QDialog):
         if self._checkbox_clearonclose.isChecked():
             self.clear_textfield()
 
+    def _set_autoscroll(self):
+        config = get_plugin('MidiViewer').Config
+        config.set('autoscroll', self._checkbox_autoscroll.isChecked())
+        config.write()
+
     def _set_clearonclose(self):
         config = get_plugin('MidiViewer').Config
         config.set('clearOnClose', self._checkbox_clearonclose.isChecked())
@@ -128,6 +142,8 @@ class MidiViewerDialog(QDialog):
         msg_dict = message.dict()
         simplified_msg = midi_utils.midi_dict_to_str(msg_dict)
         self._textfield.insertPlainText(simplified_msg + '\n')
+        if self._checkbox_autoscroll.isChecked():
+            self._textfield.ensureCursorVisible()
 
     def clear_textfield(self):
         """Called to clear the textfield."""
