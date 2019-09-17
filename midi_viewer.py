@@ -62,6 +62,18 @@ class MidiViewer(Plugin):
 
 class MidiViewerDialog(QDialog):
 
+    options = {
+        'autoscroll': {
+            'caption': translate('midi_viewer', 'Auto scroll to show most recently received message'),
+        },
+        'clearOnClose': {
+            'caption': translate('midi_viewer', 'Clear on dialog close'),
+        },
+        'inactiveWhenClosed': {
+            'caption': translate('midi_viewer', 'Ignore MIDI events when this dialog is closed'),
+        },
+    }
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -84,32 +96,13 @@ class MidiViewerDialog(QDialog):
         self._groupbox.setFocusPolicy(Qt.NoFocus)
         self._groupbox.setLayout(QFormLayout())
 
-        self._checkbox_autoscroll = QCheckBox(parent=self._groupbox)
-        self._checkbox_autoscroll.setFocusPolicy(Qt.NoFocus)
-        self._checkbox_autoscroll.setText(
-            translate('midi_viewer', 'Auto scroll to show most received message'))
-        self._checkbox_autoscroll.setChecked(
-            get_plugin('MidiViewer').Config.get('autoscroll'))
-        self._checkbox_autoscroll.released.connect(self._set_autoscroll)
-        self._groupbox.layout().addWidget(self._checkbox_autoscroll)
-
-        self._checkbox_clearonclose = QCheckBox(parent=self._groupbox)
-        self._checkbox_clearonclose.setFocusPolicy(Qt.NoFocus)
-        self._checkbox_clearonclose.setText(
-            translate('midi_viewer', 'Clear on dialog close'))
-        self._checkbox_clearonclose.setChecked(
-            get_plugin('MidiViewer').Config.get('clearOnClose'))
-        self._checkbox_clearonclose.released.connect(self._set_clearonclose)
-        self._groupbox.layout().addWidget(self._checkbox_clearonclose)
-
-        self._checkbox_inactivewhenclosed = QCheckBox(parent=self._groupbox)
-        self._checkbox_inactivewhenclosed.setFocusPolicy(Qt.NoFocus)
-        self._checkbox_inactivewhenclosed.setText(
-            translate('midi_viewer', 'Ignore MIDI events when this dialog is closed'))
-        self._checkbox_inactivewhenclosed.setChecked(
-            get_plugin('MidiViewer').Config.get('inactiveWhenClosed'))
-        self._checkbox_inactivewhenclosed.released.connect(self._set_inactivewhenclosed)
-        self._groupbox.layout().addWidget(self._checkbox_inactivewhenclosed)
+        for key, option in self.options.items():
+            option['widget'] = QCheckBox(parent=self._groupbox)
+            option['widget'].setFocusPolicy(Qt.NoFocus)
+            option['widget'].setText(option['caption'])
+            option['widget'].setChecked(get_plugin('MidiViewer').Config.get(key))
+            option['widget'].toggled.connect(self._update_option)
+            self._groupbox.layout().addWidget(option['widget'])
 
         self.layout().addWidget(self._groupbox)
 
@@ -117,32 +110,26 @@ class MidiViewerDialog(QDialog):
 
     # pylint: disable=invalid-name
     def closeEvent(self, _):
-        if self._checkbox_clearonclose.isChecked():
+        if self.options['clearOnClose']['widget'].isChecked():
             self.clear_textfield()
 
-    def _set_autoscroll(self):
+    def _update_option(self, isChecked):
         config = get_plugin('MidiViewer').Config
-        config.set('autoscroll', self._checkbox_autoscroll.isChecked())
-        config.write()
-
-    def _set_clearonclose(self):
-        config = get_plugin('MidiViewer').Config
-        config.set('clearOnClose', self._checkbox_clearonclose.isChecked())
-        config.write()
-
-    def _set_inactivewhenclosed(self):
-        config = get_plugin('MidiViewer').Config
-        config.set('inactiveWhenClosed', self._checkbox_inactivewhenclosed.isChecked())
-        config.write()
+        for key, option in self.options.items():
+            if option['widget'] is not self.sender():
+                continue
+            config.set(key, isChecked)
+            config.write()
+            return
 
     def on_new_midi_message(self, message):
         """Called when a new MIDI message is recieved on the connected input."""
-        if self._checkbox_inactivewhenclosed.isChecked() and not self.isVisible():
+        if self.options['inactiveWhenClosed']['widget'].isChecked() and not self.isVisible():
             return
         msg_dict = message.dict()
         simplified_msg = midi_utils.midi_dict_to_str(msg_dict)
         self._textfield.insertPlainText(simplified_msg + '\n')
-        if self._checkbox_autoscroll.isChecked():
+        if self.options['autoscroll']['widget'].isChecked():
             self._textfield.ensureCursorVisible()
 
     def clear_textfield(self):
