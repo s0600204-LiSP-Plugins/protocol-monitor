@@ -26,7 +26,7 @@ import logging
 
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QAction, QDialog, QPushButton, QTextEdit, QVBoxLayout
+from PyQt5.QtWidgets import QAction, QCheckBox, QDialog, QFormLayout, QGroupBox, QPushButton, QTextEdit, QVBoxLayout
 
 # pylint: disable=import-error
 from lisp.core.plugin import Plugin
@@ -48,13 +48,15 @@ class MidiViewer(Plugin):
     def __init__(self, app):
         super().__init__(app)
 
-        self._dialog = MidiViewerDialog()
+        self._dialog = None
 
         self._open_viewer_action = QAction('MIDI Events Viewer', self.app.window)
         self._open_viewer_action.triggered.connect(self._open_viewer)
         self.app.window.menuTools.addAction(self._open_viewer_action)
 
     def _open_viewer(self):
+        if not self._dialog:
+            self._dialog = MidiViewerDialog()
         self._dialog.open()
 
 
@@ -77,14 +79,51 @@ class MidiViewerDialog(QDialog):
         self._button_clear.pressed.connect(self.clear_textfield)
         self.layout().addWidget(self._button_clear)
 
+        self._groupbox = QGroupBox(parent=self)
+        self._groupbox.setTitle(translate('midi_viewer', 'Options'))
+        self._groupbox.setFocusPolicy(Qt.NoFocus)
+        self._groupbox.setLayout(QFormLayout())
+
+        self._checkbox_clearonclose = QCheckBox(parent=self._groupbox)
+        self._checkbox_clearonclose.setFocusPolicy(Qt.NoFocus)
+        self._checkbox_clearonclose.setText(
+            translate('midi_viewer', 'Clear on dialog close'))
+        self._checkbox_clearonclose.setChecked(
+            get_plugin('MidiViewer').Config.get('clearOnClose'))
+        self._checkbox_clearonclose.released.connect(self._set_clearonclose)
+        self._groupbox.layout().addWidget(self._checkbox_clearonclose)
+
+        self._checkbox_inactivewhenclosed = QCheckBox(parent=self._groupbox)
+        self._checkbox_inactivewhenclosed.setFocusPolicy(Qt.NoFocus)
+        self._checkbox_inactivewhenclosed.setText(
+            translate('midi_viewer', 'Ignore MIDI events when this dialog is closed'))
+        self._checkbox_inactivewhenclosed.setChecked(
+            get_plugin('MidiViewer').Config.get('inactiveWhenClosed'))
+        self._checkbox_inactivewhenclosed.released.connect(self._set_inactivewhenclosed)
+        self._groupbox.layout().addWidget(self._checkbox_inactivewhenclosed)
+
+        self.layout().addWidget(self._groupbox)
+
         get_plugin('Midi').input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
 
+    # pylint: disable=invalid-name
     def closeEvent(self, _):
-        self.clear_textfield()
+        if self._checkbox_clearonclose.isChecked():
+            self.clear_textfield()
+
+    def _set_clearonclose(self):
+        config = get_plugin('MidiViewer').Config
+        config.set('clearOnClose', self._checkbox_clearonclose.isChecked())
+        config.write()
+
+    def _set_inactivewhenclosed(self):
+        config = get_plugin('MidiViewer').Config
+        config.set('inactiveWhenClosed', self._checkbox_inactivewhenclosed.isChecked())
+        config.write()
 
     def on_new_midi_message(self, message):
         """Called when a new MIDI message is recieved on the connected input."""
-        if not self.isVisible():
+        if self._checkbox_inactivewhenclosed.isChecked() and not self.isVisible():
             return
         msg_dict = message.dict()
         simplified_msg = midi_utils.midi_dict_to_str(msg_dict)
