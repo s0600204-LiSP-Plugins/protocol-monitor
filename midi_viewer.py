@@ -79,8 +79,13 @@ class MidiViewerDialog(QDialog):
 
         get_plugin('Midi').input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
 
+    def closeEvent(self, _):
+        self.clear_textfield()
+
     def on_new_midi_message(self, message):
         """Called when a new MIDI message is recieved on the connected input."""
+        if not self.isVisible():
+            return
         msg_dict = message.dict()
         simplified_msg = midi_utils.midi_dict_to_str(msg_dict)
         self._textfield.insertPlainText(simplified_msg + '\n')
