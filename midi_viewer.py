@@ -25,13 +25,15 @@
 import logging
 
 # pylint: disable=no-name-in-module
-from PyQt5.QtWidgets import QAction, QDialog, QTextEdit, QVBoxLayout
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QAction, QDialog, QPushButton, QTextEdit, QVBoxLayout
 
 # pylint: disable=import-error
 from lisp.core.plugin import Plugin
 from lisp.core.signal import Connection
 from lisp.plugins import get_plugin
 from lisp.plugins.midi import midi_utils
+from lisp.ui.ui_utils import translate
 
 logger = logging.getLogger(__name__) # pylint: disable=invalid-name
 
@@ -69,6 +71,12 @@ class MidiViewerDialog(QDialog):
         self._textfield.setReadOnly(True)
         self.layout().addWidget(self._textfield)
 
+        self._button_clear = QPushButton(parent=self)
+        self._button_clear.setText(translate('midi_viewer', 'Clear'))
+        self._button_clear.setFocusPolicy(Qt.NoFocus)
+        self._button_clear.pressed.connect(self.clear_textfield)
+        self.layout().addWidget(self._button_clear)
+
         get_plugin('Midi').input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
 
     def on_new_midi_message(self, message):
@@ -76,3 +84,7 @@ class MidiViewerDialog(QDialog):
         msg_dict = message.dict()
         simplified_msg = midi_utils.midi_dict_to_str(msg_dict)
         self._textfield.insertPlainText(simplified_msg + '\n')
+
+    def clear_textfield(self):
+        """Called to clear the textfield."""
+        self._textfield.clear()
