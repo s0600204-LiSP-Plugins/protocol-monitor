@@ -26,11 +26,12 @@ import logging
 
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QAction, QCheckBox, QDialog, QFormLayout, QGroupBox, QPushButton, QTextEdit, QVBoxLayout
+from PyQt5.QtWidgets import QAction, QCheckBox, QDialog, QFormLayout, QGroupBox, QLabel, QPushButton, QTextEdit, QVBoxLayout
 
 # pylint: disable=import-error
 from lisp.core.plugin import Plugin
 from lisp.core.signal import Connection
+from lisp.core.util import get_lan_ip
 from lisp.plugins import get_plugin
 from lisp.ui.ui_utils import translate
 
@@ -80,6 +81,10 @@ class OscViewerDialog(QDialog):
         self.setMinimumSize(600, 800)
         self.setLayout(QVBoxLayout())
 
+        self._caption = QLabel(parent=self)
+        self._caption.setAlignment(Qt.AlignHCenter)
+        self.layout().addWidget(self._caption)
+
         self._textfield = QTextEdit(parent=self)
         self._textfield.setReadOnly(True)
         self.layout().addWidget(self._textfield)
@@ -105,12 +110,27 @@ class OscViewerDialog(QDialog):
 
         self.layout().addWidget(self._groupbox)
 
-        get_plugin('Osc').server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
+        osc_plugin = get_plugin('Osc')
+        osc_plugin.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
+        osc_plugin.Config.changed.connect(self._update_caption)
+        osc_plugin.Config.updated.connect(self._update_caption)
+        self._update_caption()
 
     # pylint: disable=invalid-name
     def closeEvent(self, _):
         if self.options['clearOnClose']['widget'].isChecked():
             self.clear_textfield()
+
+    def _update_caption(self):
+        self._caption.setText(
+            translate(
+                'osc_viewer',
+                'Listening on <b>{}</b>, port <b>{}</b>'
+            ).format(
+                get_lan_ip(),
+                get_plugin('Osc').server.in_port
+            )
+        )
 
     def _update_option(self, isChecked):
         config = get_plugin('OscViewer').Config
