@@ -32,7 +32,7 @@ from PyQt5.QtWidgets import QAction, QCheckBox, QDialog, QFormLayout, QGroupBox,
 from lisp.core.plugin import Plugin
 from lisp.core.signal import Connection
 from lisp.core.util import get_lan_ip
-from lisp.plugins import get_plugin
+from lisp.plugins import get_plugin, PluginNotLoadedError
 from lisp.ui.ui_utils import translate
 
 logger = logging.getLogger(__name__) # pylint: disable=invalid-name
@@ -115,6 +115,12 @@ class OscViewerDialog(QDialog):
         osc_plugin.Config.changed.connect(self._update_caption)
         osc_plugin.Config.updated.connect(self._update_caption)
         self._update_caption()
+
+        try:
+            qlab_mimic = get_plugin('QlabMimic')
+            qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
+        except PluginNotLoadedError:
+            pass
 
     # pylint: disable=invalid-name
     def closeEvent(self, _):
