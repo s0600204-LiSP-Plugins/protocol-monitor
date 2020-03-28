@@ -1,9 +1,9 @@
 
-The **MIDI Viewer** is a community-created plugin for
+**MIDI Viewer** and **OSC Viewer** are community-created plugins for
 **[Linux Show Player](https://github.com/FrancescoCeruti/linux-show-player)**
 
-This plugin adds a non-modal dialog window in which incoming MIDI messages are listed as they
-arrive. This window may be opened via an option on the "Tools" menu.
+These plugin adds non-modal dialog windows in which incoming MIDI and OSC messages are listed as
+they arrive. These windows may be opened via an option on the "Tools" menu.
 
 
 ### Installation
