@@ -1,7 +1,14 @@
 {
-  "_version_": "0.5",
+  "_version_": "0.1",
   "_enabled_": true,
-  "autoscroll": true,
-  "clearOnClose": true,
-  "inactiveWhenClosed": true
+  "midi": {
+    "autoscroll": true,
+    "clearOnClose": true,
+    "inactiveWhenClosed": true
+  },
+  "osc": {
+    "autoscroll": true,
+    "clearOnClose": true,
+    "inactiveWhenClosed": true
+  }
 }

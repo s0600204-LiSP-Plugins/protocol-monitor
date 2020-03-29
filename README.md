@@ -1,9 +1,9 @@
 
-**MIDI Viewer** and **OSC Viewer** are community-created plugins for
+The **Protocol Monitor** is a community-created plugin for
 **[Linux Show Player](https://github.com/FrancescoCeruti/linux-show-player)**
 
-These plugin adds non-modal dialog windows in which incoming MIDI and OSC messages are listed as
-they arrive. These windows may be opened via an option on the "Tools" menu.
+This plugin adds a tabbed non-modal dialog window in which incoming MIDI and OSC messages are
+listed as they arrive. This window may be opened via an option on the "Tools" menu.
 
 
 ### Installation
