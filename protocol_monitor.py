@@ -37,7 +37,7 @@ class ProtocolMonitor(Plugin):
 
     Name = 'Protocol Events Viewer'
     Authors = ('s0600204',)
-    Depends = ('Midi', 'Osc',)
+    OptDepends = ('Midi', 'Osc',)
     Description = 'Provides the ability to see incoming MIDI & OSC messages.'
 
     def __init__(self, app):

@@ -21,9 +21,13 @@
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
 from lisp.core.signal import Connection
-from lisp.plugins import get_plugin
-from lisp.plugins.midi import midi_utils
+from lisp.plugins import get_plugin, PluginNotLoadedError
 from lisp.ui.ui_utils import translate
+
+try:
+    from lisp.plugins.midi import midi_utils
+except ModuleNotFoundError:
+    pass
 
 from ..tab_page import MonitorPageWidget
 
@@ -45,7 +49,14 @@ class Midi(MonitorPageWidget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        get_plugin('Midi').input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
+        try:
+            midi_plugin = get_plugin('Midi')
+        except PluginNotLoadedError:
+            self._caption.setText('MIDI Plugin either not Installed or Enabled')
+            return
+        self._caption.hide()
+
+        midi_plugin.input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
 
     def on_new_midi_message(self, message):
         """Called when a new MIDI message is recieved on the connected input."""

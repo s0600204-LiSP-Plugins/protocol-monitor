@@ -22,7 +22,6 @@
 
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLabel
 
 from lisp.core.signal import Connection
 from lisp.core.util import get_lan_ip
@@ -49,11 +48,12 @@ class Osc(MonitorPageWidget):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self._caption = QLabel(parent=self)
-        self._caption.setAlignment(Qt.AlignHCenter)
-        self.layout().insertWidget(0, self._caption)
+        try:
+            osc_plugin = get_plugin('Osc')
+        except PluginNotLoadedError:
+            self._caption.setText('OSC Plugin either not Installed or Enabled')
+            return
 
-        osc_plugin = get_plugin('Osc')
         osc_plugin.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
         osc_plugin.Config.changed.connect(self._update_caption)
         osc_plugin.Config.updated.connect(self._update_caption)

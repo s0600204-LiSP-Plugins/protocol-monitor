@@ -22,7 +22,7 @@
 
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QCheckBox, QFormLayout, QGroupBox, QPushButton, QTextEdit, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QCheckBox, QFormLayout, QGroupBox, QLabel, QPushButton, QTextEdit, QVBoxLayout, QWidget
 
 from lisp.plugins import get_plugin
 from lisp.ui.ui_utils import translate
@@ -36,6 +36,10 @@ class MonitorPageWidget(QWidget):
         super().__init__(**kwargs)
 
         self.setLayout(QVBoxLayout())
+
+        self._caption = QLabel(parent=self)
+        self._caption.setAlignment(Qt.AlignHCenter)
+        self.layout().addWidget(self._caption)
 
         self._textfield = QTextEdit(parent=self)
         self._textfield.setReadOnly(True)
