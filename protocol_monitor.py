@@ -74,5 +74,10 @@ class ProtocolViewerDialog(QDialog):
             self.tab_widget.addTab(tab(parent=self.tab_widget), tab.tabname)
         self.layout().addWidget(self.tab_widget)
 
+    def done(self, *args, **kwargs):
+        super().done(*args, **kwargs)
+        for idx in range(self.tab_widget.count()):
+            self.tab_widget.widget(idx).on_close()
+
     def view(self):
         return self.tab_widget

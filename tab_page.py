@@ -66,8 +66,7 @@ class MonitorPageWidget(QWidget):
             self._groupbox.layout().addWidget(option['widget'])
         self.layout().addWidget(self._groupbox)
 
-    # pylint: disable=invalid-name
-    def closeEvent(self, _):
+    def on_close(self):
         if self.options['clearOnClose']['widget'].isChecked():
             self.clear_textfield()
 
@@ -78,7 +77,6 @@ class MonitorPageWidget(QWidget):
             if option['widget'] is not self.sender():
                 continue
             config.set('.'.join([protocol, key]), isChecked)
-            print(config)
             config.write()
             return
 
