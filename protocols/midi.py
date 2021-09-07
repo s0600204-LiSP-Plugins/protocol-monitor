@@ -21,7 +21,8 @@
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
 from lisp.core.signal import Connection
-from lisp.plugins import get_plugin, PluginNotLoadedError
+from lisp.plugins import get_plugin
+from lisp.core.plugin import PluginNotLoadedError
 from lisp.ui.ui_utils import translate
 
 try:
@@ -54,6 +55,11 @@ class Midi(MonitorPageWidget):
         except PluginNotLoadedError:
             self._caption.setText('MIDI Plugin either not Installed or Enabled')
             return
+
+        if not midi_plugin.is_loaded():
+            self._caption.setText('MIDI Plugin is not Enabled')
+            return
+
         self._caption.hide()
 
         midi_plugin.input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)

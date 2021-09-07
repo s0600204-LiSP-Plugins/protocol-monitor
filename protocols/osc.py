@@ -25,7 +25,8 @@ from PyQt5.QtCore import Qt
 
 from lisp.core.signal import Connection
 from lisp.core.util import get_lan_ip
-from lisp.plugins import get_plugin, PluginNotLoadedError
+from lisp.plugins import get_plugin
+from lisp.core.plugin import PluginNotLoadedError
 from lisp.ui.ui_utils import translate
 
 from ..tab_page import MonitorPageWidget
@@ -54,6 +55,10 @@ class Osc(MonitorPageWidget):
             self._caption.setText('OSC Plugin either not Installed or Enabled')
             return
 
+        if not osc_plugin.is_loaded():
+            self._caption.setText('OSC Plugin is not Enabled')
+            return
+
         osc_plugin.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
         osc_plugin.Config.changed.connect(self._update_caption)
         osc_plugin.Config.updated.connect(self._update_caption)
@@ -61,7 +66,8 @@ class Osc(MonitorPageWidget):
 
         try:
             qlab_mimic = get_plugin('QlabMimic')
-            qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
+            if qlab_mimic.is_loaded():
+                qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
         except PluginNotLoadedError:
             pass
 
