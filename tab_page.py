@@ -22,6 +22,7 @@
 
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFontMetrics
 from PyQt5.QtWidgets import QCheckBox, QFormLayout, QGroupBox, QLabel, QPushButton, QTextEdit, QVBoxLayout, QWidget
 
 from lisp.plugins import get_plugin
@@ -43,6 +44,8 @@ class MonitorPageWidget(QWidget):
 
         self._textfield = QTextEdit(parent=self)
         self._textfield.setReadOnly(True)
+        self._textfield.setTabStopWidth(
+            QFontMetrics(self._textfield.currentFont()).horizontalAdvance(" ") * 8)
         self.layout().addWidget(self._textfield)
 
         self._button_clear = QPushButton(parent=self)

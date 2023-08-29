@@ -51,18 +51,33 @@ class Midi(MonitorPageWidget):
         super().__init__(**kwargs)
 
         try:
-            midi_plugin = get_plugin('Midi')
+            self._midi_plugin = get_plugin('Midi')
         except PluginNotLoadedError:
             self._caption.setText('MIDI Plugin either not Installed or Enabled')
             return
 
-        if not midi_plugin.is_loaded():
+        if not self._midi_plugin.is_loaded():
             self._caption.setText('MIDI Plugin is not Enabled')
             return
 
         self._caption.hide()
 
-        midi_plugin.input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
+        if hasattr(self._midi_plugin, "received"):
+            self._midi_plugin.received.connect(self.on_received_midi_message, Connection.QtQueued)
+        else:
+            self._midi_plugin.input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
+
+    def on_received_midi_message(self, source, message):
+        """Called when a new MIDI message is received on any connected inputs."""
+        if self.options['inactiveWhenClosed']['widget'].isChecked() and not self.isVisible():
+            return
+
+        source_name = self._midi_plugin.input_name(source)
+        simplified_msg = midi_utils.midi_dict_to_str(message.dict())
+        self._textfield.insertPlainText(f"{source} :: {source_name}\n\t{simplified_msg}\n\n")
+
+        if self.options['autoscroll']['widget'].isChecked():
+            self._textfield.ensureCursorVisible()
 
     def on_new_midi_message(self, message):
         """Called when a new MIDI message is recieved on the connected input."""
