@@ -23,6 +23,8 @@
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
 
+import netifaces as ni
+
 from lisp.core.signal import Connection
 from lisp.core.util import get_lan_ip
 from lisp.plugins import get_plugin
@@ -72,13 +74,30 @@ class Osc(MonitorPageWidget):
             pass
 
     def _update_caption(self):
+        addrs_text = ''
+        addrs_count = 0
+        for iface in ni.interfaces():
+            try:
+                for addr in ni.ifaddresses(iface)[ni.AF_INET]:
+                    if addr['addr'] == '127.0.0.1':
+                        continue
+                    if addrs_text:
+                        addrs_text += ', '
+                    addrs_text += f"<b>{addr['addr']}</b>"
+                    addrs_count += 1
+
+            except KeyError:
+                continue
+
         self._caption.setText(
             translate(
                 'osc_viewer',
-                'Listening on <b>{}</b>, port <b>{}</b>'
+                'Listening to port <b>{}</b> on address(es) {}',
+                None,
+                addrs_count
             ).format(
-                get_lan_ip(),
-                get_plugin('Osc').server.in_port
+                get_plugin('Osc').server.in_port,
+                addrs_text
             )
         )
 

@@ -20,7 +20,11 @@ b. showing exactly what's being received.
 Dependencies
 ------------
 
-This plugin has no dependencies other than *Linux Show Player* ``v0.6``.
+*Linux Show Player*
+  Specifically, version ``0.6``.
+
+`netifaces`_
+  A python module that can be acquired from your distro's package repository, or from PyPI_.
 
 
 Installation
@@ -37,3 +41,5 @@ automatically.
 
 
 .. _Linux Show Player: https://github.com/FrancescoCeruti/linux-show-player
+.. _netifaces: https://github.com/al45tair/netifaces
+.. _PyPI: https://pypi.org/project/netifaces/
