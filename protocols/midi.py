@@ -61,6 +61,7 @@ class Midi(MonitorPageWidget):
             return
 
         self._caption.hide()
+        self._last_source = None
 
         if hasattr(self._midi_plugin, "received"):
             self._midi_plugin.received.connect(self.on_received_midi_message, Connection.QtQueued)
@@ -72,9 +73,13 @@ class Midi(MonitorPageWidget):
         if self.options['inactiveWhenClosed']['widget'].isChecked() and not self.isVisible():
             return
 
-        source_name = self._midi_plugin.input_name(source)
+        if source != self._last_source:
+            source_name = self._midi_plugin.input_name(source)
+            self._textfield.insertPlainText(f"\n{source} :: {source_name}\n")
+            self._last_source = source
+
         simplified_msg = midi_utils.midi_dict_to_str(message.dict())
-        self._textfield.insertPlainText(f"{source} :: {source_name}\n\t{simplified_msg}\n\n")
+        self._textfield.insertPlainText(f"\t{simplified_msg}\n")
 
         if self.options['autoscroll']['widget'].isChecked():
             self._textfield.ensureCursorVisible()
