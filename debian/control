@@ -1,0 +1,33 @@
+Source: protocol-monitor
+Section: sound
+Priority: optional
+Maintainer: s0600204 <dev@s0600204>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13)
+Standards-Version: 4.6.2
+Homepage: https://github.com/s0600204-lisp-plugins/protocol-monitor.git
+
+Package: linux-show-player-protocol-monitor
+Architecture: all
+Depends:
+ ${misc:Depends},
+ python3-netifaces
+Recommends:
+ linux-show-player-midi,
+ linux-show-player-osc
+Suggests:
+ linux-show-player
+Description: Protocol Monitor
+ This plugin adds a tabbed non-modal dialog window in which incoming MIDI and OSC
+ messages are listed as they arrive. This window may be opened via the "Tools"
+ menu.
+ .
+ The tab displaying OSC messages also conveniently shows the exact ip and port
+ Linux Show Player is currently listening for OSC messages on.
+ .
+ This plugin is most useful during the setup or debugging of system integration:
+ .
+ a. checking that Linux Show Player is receiving something, and
+ .
+ b. showing exactly what's being received.

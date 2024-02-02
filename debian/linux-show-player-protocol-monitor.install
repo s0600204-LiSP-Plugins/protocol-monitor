@@ -1,0 +1,3 @@
+protocols usr/lib/python3/dist-packages/lisp/plugins/protocol_monitor
+*.json usr/lib/python3/dist-packages/lisp/plugins/protocol_monitor
+*.py usr/lib/python3/dist-packages/lisp/plugins/protocol_monitor
