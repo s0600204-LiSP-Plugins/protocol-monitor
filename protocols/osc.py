@@ -2,10 +2,10 @@
 # licence as - Linux Show Player
 #
 # Linux Show Player:
-#   Copyright 2012-2022 Francesco Ceruti <ceppofrancy@gmail.com>
+#   Copyright 2012-2024 Francesco Ceruti <ceppofrancy@gmail.com>
 #
 # This file:
-#   Copyright 2022 s0600204
+#   Copyright 2024 s0600204
 #
 # Linux Show Player is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 # pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
 
-import netifaces as ni
+import ifaddr
 
 from lisp.core.signal import Connection
 from lisp.core.util import get_lan_ip
@@ -76,14 +76,14 @@ class Osc(MonitorPageWidget):
     def _update_caption(self):
         addrs_text = ''
         addrs_count = 0
-        for iface in ni.interfaces():
+        for iface in ifaddr.get_adapters():
             try:
-                for addr in ni.ifaddresses(iface)[ni.AF_INET]:
-                    if addr['addr'] == '127.0.0.1':
+                for addr in iface.ips:
+                    if not addr.is_IPv4 or addr.ip == '127.0.0.1':
                         continue
                     if addrs_text:
                         addrs_text += ', '
-                    addrs_text += f"<b>{addr['addr']}</b>"
+                    addrs_text += f"<b>{addr.ip}</b>"
                     addrs_count += 1
 
             except KeyError:
