@@ -1,3 +1,9 @@
+protocol-monitor (0.3.0) UNRELEASED; urgency=medium
+
+  * Replace unmantained `netifaces` with `ifaddr`
+
+ -- s0600204 <dev@s0600204>  Fro, 04 Oct 2024 14:45:00 +0100
+
 protocol-monitor (0.2.0) UNRELEASED; urgency=medium
 
   * Initial packaging.

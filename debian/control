@@ -12,7 +12,7 @@ Package: linux-show-player-protocol-monitor
 Architecture: all
 Depends:
  ${misc:Depends},
- python3-netifaces
+ python3-ifaddr
 Recommends:
  linux-show-player-midi,
  linux-show-player-osc
