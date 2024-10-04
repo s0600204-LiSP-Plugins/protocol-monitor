@@ -23,7 +23,7 @@ Dependencies
 *Linux Show Player*
   Specifically, version ``0.6``.
 
-`netifaces`_
+`ifaddr`_
   A python module that can be acquired from your distro's package repository, or from PyPI_.
 
 
@@ -41,5 +41,5 @@ automatically.
 
 
 .. _Linux Show Player: https://github.com/FrancescoCeruti/linux-show-player
-.. _netifaces: https://github.com/al45tair/netifaces
-.. _PyPI: https://pypi.org/project/netifaces/
+.. _ifaddr: https://github.com/ifaddr/ifaddr
+.. _PyPI: https://pypi.org
