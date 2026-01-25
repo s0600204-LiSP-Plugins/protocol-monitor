@@ -66,12 +66,12 @@ class Osc(MonitorPageWidget):
         osc_plugin.Config.updated.connect(self._update_caption)
         self._update_caption()
 
-        try:
-            qlab_mimic = get_plugin('QlabMimic')
-            if qlab_mimic.is_loaded():
-                qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
-        except PluginNotLoadedError:
-            pass
+        # ~ try:
+            # ~ qlab_mimic = get_plugin('QlabMimic')
+            # ~ if qlab_mimic.is_loaded():
+                # ~ qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
+        # ~ except PluginNotLoadedError:
+            # ~ pass
 
     def _update_caption(self):
         addrs_text = ''
@@ -92,7 +92,7 @@ class Osc(MonitorPageWidget):
         self._caption.setText(
             translate(
                 'osc_viewer',
-                'Listening to port <b>{}</b> on address(es) {}',
+                'Listening to port <b>{}</b> on at least one of the following address(es) {}',
                 None,
                 addrs_count
             ).format(
@@ -101,14 +101,14 @@ class Osc(MonitorPageWidget):
             )
         )
 
-    def on_new_osc_message(self, path, args, types, src, user_data):
+    def on_new_osc_message(self, src, path, *args):
         """Called when a new OSC message is recieved on the connected input."""
         if self.options['inactiveWhenClosed']['widget'].isChecked() and not self.isVisible():
             return
 
         message = translate(
-            "OscServerDebug", '{} :: "{}" {}'
-        ).format(src.get_url(), path, args)
+            "OscServerDebug", '{}:{} :: "{}" {}'
+        ).format(*src, path, args)
         self._textfield.insertPlainText(message + '\n')
         if self.options['autoscroll']['widget'].isChecked():
             self._textfield.ensureCursorVisible()
