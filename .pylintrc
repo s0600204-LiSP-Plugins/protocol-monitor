@@ -1,0 +1,15 @@
+[MAIN]
+extension-pkg-allow-list=
+    PyQt5.QtCore,
+    PyQt5.QtGui,
+    PyQt5.QtWidgets,
+
+good-names=
+    # PyQt5
+    isChecked,
+
+[MESSAGES CONTROL]
+disable=
+    missing-class-docstring,
+    missing-module-docstring,
+    missing-function-docstring,

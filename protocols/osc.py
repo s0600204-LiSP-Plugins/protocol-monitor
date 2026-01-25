@@ -2,10 +2,10 @@
 # licence as - Linux Show Player
 #
 # Linux Show Player:
-#   Copyright 2012-2024 Francesco Ceruti <ceppofrancy@gmail.com>
+#   Copyright 2012-2026 Francesco Ceruti <ceppofrancy@gmail.com>
 #
 # This file:
-#   Copyright 2024 s0600204
+#   Copyright 2026 s0600204
 #
 # Linux Show Player is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=no-name-in-module
-from PyQt5.QtCore import Qt
-
 import ifaddr
 
 from lisp.core.signal import Connection
-from lisp.core.util import get_lan_ip
 from lisp.plugins import get_plugin
 from lisp.core.plugin import PluginNotLoadedError
 from lisp.ui.ui_utils import translate
@@ -38,13 +34,22 @@ class Osc(MonitorPageWidget):
     tabname = 'OSC'
     options = {
         'autoscroll': {
-            'caption': translate('protocol_monitor', 'Auto scroll to show the most recently received message'),
+            'caption': translate(
+                'protocol_monitor',
+                'Auto scroll to show the most recently received message'
+            ),
         },
         'clearOnClose': {
-            'caption': translate('protocol_monitor', 'Clear on dialog close'),
+            'caption': translate(
+                'protocol_monitor',
+                'Clear on dialog close'
+            ),
         },
         'inactiveWhenClosed': {
-            'caption': translate('protocol_monitor', 'Ignore OSC events when this dialog is closed'),
+            'caption': translate(
+                'protocol_monitor',
+                'Ignore OSC events when this dialog is closed'
+            ),
         },
     }
 
@@ -66,12 +71,12 @@ class Osc(MonitorPageWidget):
         osc_plugin.Config.updated.connect(self._update_caption)
         self._update_caption()
 
-        try:
-            qlab_mimic = get_plugin('QlabMimic')
-            if qlab_mimic.is_loaded():
-                qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
-        except PluginNotLoadedError:
-            pass
+        # ~ try:
+            # ~ qlab_mimic = get_plugin('QlabMimic')
+            # ~ if qlab_mimic.is_loaded():
+                # ~ qlab_mimic.server.new_message.connect(self.on_new_osc_message, Connection.QtQueued)
+        # ~ except PluginNotLoadedError:
+            # ~ pass
 
     def _update_caption(self):
         addrs_text = ''
@@ -92,7 +97,7 @@ class Osc(MonitorPageWidget):
         self._caption.setText(
             translate(
                 'osc_viewer',
-                'Listening to port <b>{}</b> on address(es) {}',
+                'Listening to port <b>{}</b> on at least one of the following address(es) {}',
                 None,
                 addrs_count
             ).format(
@@ -101,14 +106,14 @@ class Osc(MonitorPageWidget):
             )
         )
 
-    def on_new_osc_message(self, path, args, types, src, user_data):
+    def on_new_osc_message(self, src, path, *args):
         """Called when a new OSC message is recieved on the connected input."""
         if self.options['inactiveWhenClosed']['widget'].isChecked() and not self.isVisible():
             return
 
         message = translate(
-            "OscServerDebug", '{} :: "{}" {}'
-        ).format(src.get_url(), path, args)
+            "OscServerDebug", '{}:{} :: "{}" {}'
+        ).format(*src, path, args)
         self._textfield.insertPlainText(message + '\n')
         if self.options['autoscroll']['widget'].isChecked():
             self._textfield.ensureCursorVisible()
