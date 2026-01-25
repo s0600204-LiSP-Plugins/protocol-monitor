@@ -2,10 +2,10 @@
 # licence as - Linux Show Player
 #
 # Linux Show Player:
-#   Copyright 2012-2024 Francesco Ceruti <ceppofrancy@gmail.com>
+#   Copyright 2012-2026 Francesco Ceruti <ceppofrancy@gmail.com>
 #
 # This file:
-#   Copyright 2024 s0600204
+#   Copyright 2026 s0600204
 #
 # Linux Show Player is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,13 +20,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=no-name-in-module
-from PyQt5.QtCore import Qt
-
 import ifaddr
 
 from lisp.core.signal import Connection
-from lisp.core.util import get_lan_ip
 from lisp.plugins import get_plugin
 from lisp.core.plugin import PluginNotLoadedError
 from lisp.ui.ui_utils import translate
@@ -38,13 +34,22 @@ class Osc(MonitorPageWidget):
     tabname = 'OSC'
     options = {
         'autoscroll': {
-            'caption': translate('protocol_monitor', 'Auto scroll to show the most recently received message'),
+            'caption': translate(
+                'protocol_monitor',
+                'Auto scroll to show the most recently received message'
+            ),
         },
         'clearOnClose': {
-            'caption': translate('protocol_monitor', 'Clear on dialog close'),
+            'caption': translate(
+                'protocol_monitor',
+                'Clear on dialog close'
+            ),
         },
         'inactiveWhenClosed': {
-            'caption': translate('protocol_monitor', 'Ignore OSC events when this dialog is closed'),
+            'caption': translate(
+                'protocol_monitor',
+                'Ignore OSC events when this dialog is closed'
+            ),
         },
     }
 

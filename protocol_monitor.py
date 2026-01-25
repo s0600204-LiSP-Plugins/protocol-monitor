@@ -2,10 +2,10 @@
 # licence as - Linux Show Player
 #
 # Linux Show Player:
-#   Copyright 2012-2022 Francesco Ceruti <ceppofrancy@gmail.com>
+#   Copyright 2012-2026 Francesco Ceruti <ceppofrancy@gmail.com>
 #
 # This file:
-#   Copyright 2022 s0600204
+#   Copyright 2026 s0600204
 #
 # Linux Show Player is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 
 import logging
 
-# pylint: disable=no-name-in-module
 from PyQt5.QtWidgets import QAction, QDialog, QTabWidget, QVBoxLayout
 
 from lisp.core.plugin import Plugin
@@ -47,7 +46,10 @@ class ProtocolMonitor(Plugin):
 
         protocols.load()
 
-        self._open_viewer_action = QAction(translate('protocol_viewer', 'Protocol Events Viewer'), self.app.window)
+        self._open_viewer_action = QAction(
+            translate('protocol_viewer', 'Protocol Events Viewer'),
+            self.app.window
+        )
         self._open_viewer_action.triggered.connect(self._open_viewer)
         self.app.window.menuTools.addAction(self._open_viewer_action)
 

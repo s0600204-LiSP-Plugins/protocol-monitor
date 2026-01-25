@@ -2,10 +2,10 @@
 # licence as - Linux Show Player
 #
 # Linux Show Player:
-#   Copyright 2012-2022 Francesco Ceruti <ceppofrancy@gmail.com>
+#   Copyright 2012-2026 Francesco Ceruti <ceppofrancy@gmail.com>
 #
 # This file:
-#   Copyright 2022 s0600204
+#   Copyright 2026 s0600204
 #
 # Linux Show Player is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,10 +20,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Linux Show Player.  If not, see <http://www.gnu.org/licenses/>.
 
-# pylint: disable=no-name-in-module
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFontMetrics
-from PyQt5.QtWidgets import QCheckBox, QFormLayout, QGroupBox, QLabel, QPushButton, QTextEdit, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import (
+    QCheckBox,
+    QFormLayout,
+    QGroupBox,
+    QLabel,
+    QPushButton,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
 
 from lisp.plugins import get_plugin
 from lisp.ui.ui_utils import translate
@@ -59,12 +67,14 @@ class MonitorPageWidget(QWidget):
         self._groupbox.setFocusPolicy(Qt.NoFocus)
         self._groupbox.setLayout(QFormLayout())
 
-        protocol = self.__module__.split('.')[-1]
+        protocol = self.__module__.rsplit('.', maxsplit=1)[-1]
         for key, option in self.options.items():
             option['widget'] = QCheckBox(parent=self._groupbox)
             option['widget'].setFocusPolicy(Qt.NoFocus)
             option['widget'].setText(option['caption'])
-            option['widget'].setChecked(get_plugin('ProtocolMonitor').Config.get('.'.join([protocol, key])))
+            option['widget'].setChecked(
+                get_plugin('ProtocolMonitor').Config.get('.'.join([protocol, key]))
+            )
             option['widget'].toggled.connect(self._update_option)
             self._groupbox.layout().addWidget(option['widget'])
         self.layout().addWidget(self._groupbox)
@@ -74,7 +84,7 @@ class MonitorPageWidget(QWidget):
             self.clear_textfield()
 
     def _update_option(self, isChecked):
-        protocol = self.__module__.split('.')[-1]
+        protocol = self.__module__.rsplit('.', maxsplit=1)[-1]
         config = get_plugin('ProtocolMonitor').Config
         for key, option in self.options.items():
             if option['widget'] is not self.sender():

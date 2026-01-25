@@ -2,10 +2,10 @@
 # licence as - Linux Show Player
 #
 # Linux Show Player:
-#   Copyright 2012-2022 Francesco Ceruti <ceppofrancy@gmail.com>
+#   Copyright 2012-2026 Francesco Ceruti <ceppofrancy@gmail.com>
 #
 # This file:
-#   Copyright 2022 s0600204
+#   Copyright 2026 s0600204
 #
 # Linux Show Player is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,13 +37,22 @@ class Midi(MonitorPageWidget):
     tabname = 'MIDI'
     options = {
         'autoscroll': {
-            'caption': translate('protocol_monitor', 'Auto scroll to show the most recently received message'),
+            'caption': translate(
+                'protocol_monitor',
+                'Auto scroll to show the most recently received message'
+            ),
         },
         'clearOnClose': {
-            'caption': translate('protocol_monitor', 'Clear on dialog close'),
+            'caption': translate(
+                'protocol_monitor',
+                'Clear on dialog close'
+            ),
         },
         'inactiveWhenClosed': {
-            'caption': translate('protocol_monitor', 'Ignore MIDI events when this dialog is closed'),
+            'caption': translate(
+                'protocol_monitor',
+                'Ignore MIDI events when this dialog is closed'
+            ),
         },
     }
 
@@ -64,9 +73,11 @@ class Midi(MonitorPageWidget):
         self._last_source = None
 
         if hasattr(self._midi_plugin, "received"):
-            self._midi_plugin.received.connect(self.on_received_midi_message, Connection.QtQueued)
+            self._midi_plugin.received.connect(
+                self.on_received_midi_message, Connection.QtQueued)
         else:
-            self._midi_plugin.input.new_message.connect(self.on_new_midi_message, Connection.QtQueued)
+            self._midi_plugin.input.new_message.connect(
+                self.on_new_midi_message, Connection.QtQueued)
 
     def on_received_midi_message(self, source, message):
         """Called when a new MIDI message is received on any connected inputs."""
