@@ -1,8 +1,17 @@
+protocol-monitor (0.4.0) UNRELEASED; urgency=medium
+
+  * Adapt to `liblo` being replaced with `python-osc` in LiSP
+  * Support for QLab Mimic dropped (for know)
+  * Correct import statements
+  * General linting
+
+ -- s0600204 <dev@s0600204>  Sun, 25 Jan 2026 19:38:00 +0100
+
 protocol-monitor (0.3.0) UNRELEASED; urgency=medium
 
   * Replace unmantained `netifaces` with `ifaddr`
 
- -- s0600204 <dev@s0600204>  Fro, 04 Oct 2024 14:45:00 +0100
+ -- s0600204 <dev@s0600204>  Fri, 04 Oct 2024 14:45:00 +0100
 
 protocol-monitor (0.2.0) UNRELEASED; urgency=medium
 
